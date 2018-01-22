@@ -39,9 +39,27 @@ class JobSpider(scrapy.Spider):
 
     def parse_company(self, response):
         item = response.meta['item']
-        sel = response.xpath('//p[@class="msg ltype"]/text()')
-        texts = sel.extract_first().split('|')
-        item['company_owner'] = texts[0].strip()
-        item['company_size'] = texts[1].strip()
-        item['company_indus'] = texts[2].strip()
-        yield item
+        text = response.xpath('//p[@class="msg ltype"]/text()').extract_first()
+        if text:
+            try:
+                texts = text.split('|')
+                if len(texts) == 3:
+                    item['company_owner'] = texts[0].strip()
+                    item['company_size'] = texts[1].strip()
+                    item['company_indus'] = texts[2].strip()
+                    yield item
+                elif len(texts) == 2:
+                    if texts[0].strip()[-2].isnumeric():
+                        item['company_size'] = texts[0].strip()
+                        item['company_indus'] = texts[1].strip()
+                    elif texts[1].strip()[-2].isnumeric():
+                        item['company_owner'] = texts[0].strip()
+                        item['company_size'] = texts[1].strip()
+                    else:
+                        item['company_owner'] = texts[0].strip()
+                        item['company_indus'] = texts[1].strip()
+
+            except Exception as e:
+                self.logger.error(item['link'])
+                self.logger.error(e)
+                yield item
