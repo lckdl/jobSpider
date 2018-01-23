@@ -9,15 +9,24 @@ import scrapy
 
 
 class JobspiderItem(scrapy.Item):
-    title = scrapy.Field()              # 职位
-    title_requirement = scrapy.Field()  # 职位学位要求
-    salary = scrapy.Field()             # 薪水
-    update_time = scrapy.Field()        # 更新时间
-    link = scrapy.Field()               # 链接
-    company_name = scrapy.Field()       # 公司名称
-    company_owner = scrapy.Field()      # 公司所有制
-    company_size = scrapy.Field()       # 公司人数规模
-    company_indus = scrapy.Field()      # 公司行业
-    company_desc = scrapy.Field()       # 公司详细信息
-    location = scrapy.Field()           # 工作地点
+    positionName = scrapy.Field()
+    positionLabels = scrapy.Field()
+    positionAdvantage = scrapy.Field()
+    education = scrapy.Field()
+    workYear = scrapy.Field()
+    jobNature = scrapy.Field()
+    salary = scrapy.Field()
+    createTime = scrapy.Field()
+    industryField = scrapy.Field()
+    industryLabels = scrapy.Field()
+    companyName = scrapy.Field()
+    companySize = scrapy.Field()
+    financeStage = scrapy.Field()
+    companyLabelList = scrapy.Field()
+    city = scrapy.Field()
+    businessZones = scrapy.Field()
+    district = scrapy.Field()
+    firstType = scrapy.Field()
+    secondType = scrapy.Field()
+    link = scrapy.Field()
     pass
