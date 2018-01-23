@@ -13,7 +13,6 @@ class LagouSpider(scrapy.Spider):
         'Accept': 'application/json, text/javascript, */*; q=0.01',
         'Accept-Encoding': 'gzip, deflate, br',
         'Accept-Language': 'zh-CN,zh;q=0.9',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
         'Host': 'www.lagou.com',
         'Origin': 'https://www.lagou.com',
         'Referer': "https://www.lagou.com/jobs/list_",
@@ -49,6 +48,7 @@ class LagouSpider(scrapy.Spider):
         data = json.loads(response.text, encoding='utf-8')
         if not data['success']:
             self.logger.info(str(data))
+            return
         results = data['content']['positionResult']['result']
         for i in results:
             item = JobspiderItem()
