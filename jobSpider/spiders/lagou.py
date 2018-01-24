@@ -3,6 +3,7 @@ import scrapy
 from jobSpider.items import JobspiderItem
 import urllib.parse
 import json
+import math
 
 leadingCities = [
     '北京', '上海', '深圳', '广州', '杭州', '成都', '南京', '武汉', '西安', '厦门', '长沙', '苏州', '天津', '重庆',
@@ -57,7 +58,6 @@ class LagouSpider(scrapy.Spider):
                                      callback=self.parse)
             elif 'district' not in query_string_dict:  # extract districts
                 districts = response.xpath("//div[@data-type='district']/a/text()").extract()
-                print(districts)
                 query_string_dict['district'] = districts[1]
                 query_string = urllib.parse.urlencode(query_string_dict)
                 yield scrapy.Request(url=self.start_url + '?' + query_string,
@@ -71,7 +71,7 @@ class LagouSpider(scrapy.Spider):
             return
         header = self.header.copy()
         header['Referer'] = response.url
-        page = int(title_count) // itemPerPage + 1 if not title_count == '500+' else 30
+        page = math.ceil(int(title_count) / itemPerPage) if not title_count == '500+' else 30
         if page == 30:
             print(response.url, "too many items")
         query_string = urllib.parse.urlencode(query_string_dict)
@@ -83,6 +83,7 @@ class LagouSpider(scrapy.Spider):
                 'pn': str(i),
                 'kd': self.search_key
             }
+            # print(query_string_dict, 'page:', i)
             yield scrapy.FormRequest(url=url, method='POST', formdata=formdata, headers=header,
                                      callback=self.parse_json)
         #  next page (district or city)
@@ -143,11 +144,12 @@ class LagouSpider(scrapy.Spider):
             item['district'] = i['district']
             item['firstType'] = i['firstType']
             item['secondType'] = i['secondType']
-            # item['link'] = i['link']
+            item['link'] = 'https://www.lagou.com/jobs/' + str(i['positionId']) + '.html'
+            item['keyword'] = self.search_key
             yield item
 
     def _next_city(self, city):
         if city == leadingCities[-1]:
             return False
-        index = leadingCities[city]
+        index = leadingCities.index(city)
         return leadingCities[index + 1]

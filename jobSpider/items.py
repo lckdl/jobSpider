@@ -29,4 +29,5 @@ class JobspiderItem(scrapy.Item):
     firstType = scrapy.Field()
     secondType = scrapy.Field()
     link = scrapy.Field()
+    keyword = scrapy.Field()
     pass
