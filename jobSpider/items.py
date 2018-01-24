@@ -28,6 +28,7 @@ class JobspiderItem(scrapy.Item):
     district = scrapy.Field()
     firstType = scrapy.Field()
     secondType = scrapy.Field()
+    detail = scrapy.Field()
     link = scrapy.Field()
     keyword = scrapy.Field()
     pass

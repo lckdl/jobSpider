@@ -146,7 +146,15 @@ class LagouSpider(scrapy.Spider):
             item['secondType'] = i['secondType']
             item['link'] = 'https://www.lagou.com/jobs/' + str(i['positionId']) + '.html'
             item['keyword'] = self.search_key
-            yield item
+            yield scrapy.Request(url=item['link'], headers=response.request.headers, meta={'item': item},
+                                 callback=self.parse_detail)
+
+    def parse_detail(self, response):
+        item = response.meta['item']
+        sel = response.xpath("//dd[@class='job_bt']/div")
+        detail = sel.xpath("string(.)").extract_first().strip()
+        item['detail'] = detail
+        yield item
 
     def _next_city(self, city):
         if city == leadingCities[-1]:
