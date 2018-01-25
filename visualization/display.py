@@ -24,7 +24,12 @@ for i in cities:
 
 ordered_count = OrderedDict(sorted(city_count.items(), key=lambda x: x[1], reverse=True))
 bar = Bar("Python")
-bar.add("city", list(ordered_count.keys()), list(ordered_count.values()), xaxis_interval=0, is_more_utils=True)
+bar.add("city", list(ordered_count.keys()), list(ordered_count.values()),
+        xaxis_interval=0,
+        xaxis_rotate=30,
+        is_more_utils=True,
+        is_label_show=True,
+        is_datazoom_show=True)
 bar.render()
 
 webbrowser.open('file:///' + os.getcwd() + '/render.html')
