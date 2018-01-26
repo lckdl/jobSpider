@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2018/1/25 19:49
+# @Time    : 2018/1/26 12:30
 # @Author  : Kevin Liu
 # @Site    : 
-# @File    : data.py
+# @File    : mongoclient.py
 # @Software: PyCharm
 
 from pymongo import *
