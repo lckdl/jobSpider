@@ -7,7 +7,11 @@
 # @Software: PyCharm
 
 from pymongo import *
-from jobSpider.settings import MONGODB_SERVER, MONGODB_COLLECTION, MONGODB_DB, MONGODB_PORT
+
+MONGODB_SERVER = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DB = 'Scrapy'
+MONGODB_COLLECTION = "job"
 
 
 class _Database(object):

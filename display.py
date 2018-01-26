@@ -9,8 +9,8 @@
 import os
 import webbrowser
 from pyecharts import Bar, WordCloud, Page
-from dataAnalysis.mongoclient import client
-import dataAnalysis.cut
+from visualization.dataAnalysis.mongoclient import client
+import visualization.dataAnalysis.cut
 from collections import OrderedDict
 
 # get datas
@@ -26,7 +26,7 @@ for i in cities:
 ordered_count = OrderedDict(sorted(city_count.items(), key=lambda x: x[1], reverse=True))
 
 # detail tags
-tags_list = dataAnalysis.cut.da_for_wordcloud()
+tags_list = visualization.dataAnalysis.cut.da_for_wordcloud()
 # filter
 names = list(tags_list[0])
 values = list(tags_list[1])

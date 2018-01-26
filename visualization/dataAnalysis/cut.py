@@ -7,7 +7,7 @@
 # @Software: PyCharm
 
 import jieba.analyse
-from dataAnalysis.mongoclient import client
+from visualization.dataAnalysis.mongoclient import client
 
 
 def da_for_wordcloud():
