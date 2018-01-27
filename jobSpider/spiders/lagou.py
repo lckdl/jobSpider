@@ -69,23 +69,7 @@ class LagouSpider(scrapy.Spider):
 
         if not parse_json_is_ready:
             return
-        header = self.header.copy()
-        header['Referer'] = response.url
-        page = math.ceil(int(title_count) / itemPerPage) if not title_count == '500+' else 30
-        if page == 30:
-            print(response.url, "too many items")
-        query_string = urllib.parse.urlencode(query_string_dict)
-        for i in range(1, page + 1):
-            url = self.start_ajax + query_string
-            # formdata values must be string
-            formdata = {
-                'first': 'true',
-                'pn': str(i),
-                'kd': self.search_key
-            }
-            # print(query_string_dict, 'page:', i)
-            yield scrapy.FormRequest(url=url, method='POST', formdata=formdata, headers=header,
-                                     callback=self.parse_json)
+        query_string_for_ajax = urllib.parse.urlencode(query_string_dict)
         #  next page (district or city)
         if 'district' in query_string_dict:
             districts = response.meta['districts']
@@ -116,6 +100,22 @@ class LagouSpider(scrapy.Spider):
                                      headers=self.header,
                                      meta={'queryString_dict': query_string_dict},
                                      callback=self.parse)
+        header = self.header.copy()
+        header['Referer'] = response.url
+        page = math.ceil(int(title_count) / itemPerPage) if not title_count == '500+' else 30
+        url = self.start_ajax + query_string_for_ajax
+        if page == 30:
+            print(response.url, "too many items")
+        for i in range(1, page + 1):
+            # formdata values must be string
+            formdata = {
+                'first': 'true',
+                'pn': str(i),
+                'kd': self.search_key
+            }
+            # print(query_string_dict, 'page:', i)
+            yield scrapy.FormRequest(url=url, method='POST', formdata=formdata, headers=header,
+                                     callback=self.parse_json)
 
     def parse_json(self, response):
         data = json.loads(response.text, encoding='utf-8')
