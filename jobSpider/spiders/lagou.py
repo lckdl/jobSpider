@@ -13,6 +13,7 @@ leadingCities = [
 ]
 
 itemPerPage = 15
+needDetail = False
 
 
 class LagouSpider(scrapy.Spider):
@@ -38,25 +39,24 @@ class LagouSpider(scrapy.Spider):
     def start_requests(self):
         if self.search_key is not None:
             self.start_url = self.start_url + self.search_key
-            yield scrapy.Request(url=self.start_url, headers=self.header,
-                                 meta={'queryString_dict': {'needAddtionalResult': False, 'isSchoolJob': 0, }},
-                                 callback=self.parse)
-
-    def parse(self, response):
-        parse_json_is_ready = False
-        title_count = response.xpath("//a[@id='tab_pos']/span/text()").extract_first()
-        query_string_dict = response.meta['queryString_dict']
-        if not title_count == '500+':
-            parse_json_is_ready = True  # count < 500
-        else:  # too many results
-            if 'city' not in query_string_dict:
-                query_string_dict['city'] = leadingCities[0]
+            for city in leadingCities:
+                query_string_dict = {'needAddtionalResult': False, 'isSchoolJob': 0, 'city': city}
                 query_string = urllib.parse.urlencode(query_string_dict)
                 yield scrapy.Request(url=self.start_url + '?' + query_string,
                                      headers=self.header,
                                      meta={'queryString_dict': query_string_dict},
                                      callback=self.parse)
-            elif 'district' not in query_string_dict:  # extract districts
+
+    def parse(self, response):
+        parse_json_is_ready = False
+        title_count = response.xpath("//a[@id='tab_pos']/span/text()").extract_first()
+        if not title_count:
+            return
+        query_string_dict = response.meta['queryString_dict']
+        if not title_count == '500+':
+            parse_json_is_ready = True  # count < 500
+        else:  # too many results
+            if 'district' not in query_string_dict:  # extract districts
                 districts = response.xpath("//div[@data-type='district']/a/text()").extract()
                 query_string_dict['district'] = districts[1]
                 query_string = urllib.parse.urlencode(query_string_dict)
@@ -73,32 +73,13 @@ class LagouSpider(scrapy.Spider):
         #  next page (district or city)
         if 'district' in query_string_dict:
             districts = response.meta['districts']
-            if query_string_dict['district'] == districts[-1]:
-                del query_string_dict['district']
-                city = self._next_city(query_string_dict['city'])
-                if city:
-                    query_string_dict['city'] = city
-                    query_string = urllib.parse.urlencode(query_string_dict)
-                    yield scrapy.Request(url=self.start_url + '?' + query_string,
-                                         headers=self.header,
-                                         meta={'queryString_dict': query_string_dict},
-                                         callback=self.parse)
-            else:
+            if not query_string_dict['district'] == districts[-1]:
                 index = districts.index(query_string_dict['district'])
                 query_string_dict['district'] = districts[index + 1]
                 query_string = urllib.parse.urlencode(query_string_dict)
                 yield scrapy.Request(url=self.start_url + '?' + query_string,
                                      headers=self.header,
                                      meta={'queryString_dict': query_string_dict, 'districts': districts},
-                                     callback=self.parse)
-        elif 'city' in query_string_dict:
-            city = self._next_city(query_string_dict['city'])
-            if city:
-                query_string_dict['city'] = city
-                query_string = urllib.parse.urlencode(query_string_dict)
-                yield scrapy.Request(url=self.start_url + '?' + query_string,
-                                     headers=self.header,
-                                     meta={'queryString_dict': query_string_dict},
                                      callback=self.parse)
         header = self.header.copy()
         header['Referer'] = response.url
@@ -146,8 +127,11 @@ class LagouSpider(scrapy.Spider):
             item['secondType'] = i['secondType']
             item['link'] = 'https://www.lagou.com/jobs/' + str(i['positionId']) + '.html'
             item['keyword'] = self.search_key
-            yield scrapy.Request(url=item['link'], headers=response.request.headers, meta={'item': item},
-                                 callback=self.parse_detail)
+            if needDetail:
+                yield scrapy.Request(url=item['link'], headers=response.request.headers, meta={'item': item},
+                                     callback=self.parse_detail)
+            else:
+                yield item
 
     def parse_detail(self, response):
         item = response.meta['item']

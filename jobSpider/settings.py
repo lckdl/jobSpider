@@ -17,11 +17,13 @@ NEWSPIDER_MODULE = 'jobSpider.spiders'
 MONGODB_SERVER = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'Scrapy'
-MONGODB_COLLECTION = "job"
+MONGODB_COLLECTION = "job1"
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
 
 LOG_LEVEL = 'INFO'
+REDIRECT_ENABLED = False
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'jobSpider (+http://www.yourdomain.com)'
 
