@@ -8,5 +8,6 @@
 
 from scrapy import cmdline
 
-cmdline.execute("scrapy crawl lagou -a key=java".split())
+# cmdline.execute("scrapy crawl lagou -a key=java".split())
+cmdline.execute("scrapy crawl easylagou".split())
 # cmdline.execute("scrapy crawlall".split())
