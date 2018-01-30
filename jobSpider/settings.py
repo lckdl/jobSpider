@@ -17,7 +17,7 @@ NEWSPIDER_MODULE = 'jobSpider.spiders'
 MONGODB_SERVER = 'localhost'
 MONGODB_PORT = 27017
 MONGODB_DB = 'Scrapy'
-MONGODB_COLLECTION = "job1"
+MONGODB_COLLECTION = "job_easy"
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36'
 
